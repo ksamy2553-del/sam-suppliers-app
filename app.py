@@ -456,10 +456,11 @@ with tabs[5]:
         else:
             st.info("No expenses recorded yet.")
     except:
+        except:
         st.info("Could not load expenses.")
         if st.session_state.role == "Admin":
-        with st.sidebar.expander("🛠️ Manage Workers"):
-        st.subheader("Registered Workers")
+            with st.sidebar.expander("🛠️ Manage Workers"):
+                st.subheader("Registered Workers")
         try:
             res = requests.get(f"{BACKEND_URL}/workers")
             if res.status_code == 200:
