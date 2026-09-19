@@ -466,17 +466,17 @@ except:
                 if res.status_code == 200:
                     for w in res.json():
                         st.write(f"**{w['worker_name']}** (`{w['phone']}`)")
-                    reason_w = st.text_input("Reason for deletion", key=f"reason_w_{w['phone']}")
-                    if st.button("Delete Worker", key=f"del_w_{w['phone']}"):
-                        if not reason_w:
-                            st.warning("Please provide a reason.")
-                        else:
-                            del_res = requests.delete(f"{BACKEND_URL}/workers/{w['phone']}", params={"reason": reason_w})
-                            if del_res.status_code == 200:
-                                st.success("Worker deleted.")
-                                st.rerun()
-        except Exception:
-            st.error("Could not load workers.")
+                        reason_w = st.text_input("Reason for deletion", key=f"reason_w_{w['phone']}")
+                        if st.button("Delete Worker", key=f"del_w_{w['phone']}"):
+                            if not reason_w:
+                                st.warning("Please provide a reason.")
+                            else:
+                                del_res = requests.delete(f"{BACKEND_URL}/workers/{w['phone']}", params={"reason": reason_w})
+                                if del_res.status_code == 200:
+                                    st.success("Worker deleted.")
+                                    st.rerun()
+            except Exception:
+                st.error("Could not load workers.")
             reason_prod = st.text_input("Reason for deletion", key=f"reason_prod_{prod['id']}")
 if st.button("Delete Product", key=f"del_prod_{prod['id']}"):
     if not reason_prod:
