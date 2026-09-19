@@ -45,7 +45,7 @@ if not st.session_state.logged_in:
             else:
                 st.warning("Please fill in both fields.")
     
-   # st.info("💡 Default Admin Account: Phone: `0700000000` | Password: `admin123`")
+    #st.info("💡 Default Admin Account: Phone: `0700000000` | Password: `admin123`")
     st.stop()  # Stops execution until logged in
 
 # --- LOGGED-IN SIDEBAR & APP NAVIGATION ---
@@ -457,3 +457,55 @@ with tabs[5]:
             st.info("No expenses recorded yet.")
     except:
         st.info("Could not load expenses.")
+        if st.session_state.role == "Admin":
+    with st.sidebar.expander("🛠️ Manage Workers"):
+        st.subheader("Registered Workers")
+        try:
+            res = requests.get(f"{BACKEND_URL}/workers")
+            if res.status_code == 200:
+                for w in res.json():
+                    st.write(f"**{w['worker_name']}** (`{w['phone']}`)")
+                    reason_w = st.text_input("Reason for deletion", key=f"reason_w_{w['phone']}")
+                    if st.button("Delete Worker", key=f"del_w_{w['phone']}"):
+                        if not reason_w:
+                            st.warning("Please provide a reason.")
+                        else:
+                            del_res = requests.delete(f"{BACKEND_URL}/workers/{w['phone']}", params={"reason": reason_w})
+                            if del_res.status_code == 200:
+                                st.success("Worker deleted.")
+                                st.rerun()
+        except Exception:
+            st.error("Could not load workers.")
+            reason_prod = st.text_input("Reason for deletion", key=f"reason_prod_{prod['id']}")
+if st.button("Delete Product", key=f"del_prod_{prod['id']}"):
+    if not reason_prod:
+        st.warning("Please enter a reason for deleting this product.")
+    else:
+        del_res = requests.delete(f"{BACKEND_URL}/products/{prod['id']}", params={"reason": reason_prod})
+        if del_res.status_code == 200:
+            st.success("Product deleted.")
+            st.rerun()
+            reason_cust = st.text_input("Reason for deletion", key=f"reason_cust_{cust['id']}")
+if st.button("Delete Customer", key=f"del_c_{cust['id']}"):
+    if not reason_cust:
+        st.warning("Please provide a reason to delete this customer.")
+    else:
+        del_res = requests.delete(f"{BACKEND_URL}/customers/{cust['id']}", params={"reason": reason_cust})
+        if del_res.status_code == 200:
+            st.success("Customer deleted.")
+            st.rerun()
+            # (Make sure "Deletion Audit Trail" is included in your main st.tabs list)
+with tabs[-1]: # or under your audit tab
+    st.header("Deletion Logs & Audit Trail")
+    st.write("Review all deleted items and their mandatory reasons.")
+    try:
+        res = requests.get(f"{BACKEND_URL}/deletion-logs")
+        if res.status_code == 200:
+            logs = res.json()
+            if not logs:
+                st.info("No deletion records found.")
+            for log in logs:
+                st.markdown(f"- **Type:** {log['item_type']} | **Item:** {log['item_identifier']} | **Reason:** *{log['reason']}* | <small>At: {log['deleted_at']}</small>", unsafe_allow_html=True)
+    except Exception:
+        st.error("Could not fetch deletion logs.")
+        #"Add delete features and audit trail"
