@@ -36,9 +36,9 @@ if not st.session_state.logged_in:
                     if res.status_code == 200:
                         data = res.json()
                         st.session_state.logged_in = True
-                        st.session_state.worker_name = data["worker_name"]
+                        st.session_state.worker_name = data["name"]
                         st.session_state.role = data["role"]
-                        st.success(f"Welcome back, {data['worker_name']}!")
+                        st.success(f"Welcome back, {data['name']}!")
                         st.rerun()
                     else:
                         st.error("Invalid telephone number or password.")
