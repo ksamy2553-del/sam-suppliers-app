@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 
 # --- CONFIGURATION ---
-BACKEND_URL = "https://sam-suppliers-app-sqkruhZpqvyb9kmbolnun.streamlit.app"  # Update if your backend URL is different
+BACKEND_URL = "https://sam-suppliers-backend-2.onrender.com"  # Update if your backend URL is different
 
 st.set_page_config(page_title="Sam Suppliers POS", page_icon="🛒", layout="wide")
 
