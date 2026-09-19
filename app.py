@@ -30,7 +30,7 @@ if not st.session_state.logged_in:
             if phone_input and password_input:
                 try:
                     res = requests.post(
-                        f"{BACKEND_URL}/worker/login",
+                        f"{BACKEND_URL}/workers/login",
                         json={"phone": phone_input, "password": password_input},
                     )
                     if res.status_code == 200:
