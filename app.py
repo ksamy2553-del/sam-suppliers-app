@@ -449,14 +449,14 @@ with tabs[5]:
                 
     st.markdown("### Expense History")
 try:
-        exps = requests.get(f"{BACKEND_URL}/expenses").json()
-        if exps:
-            for ex in exps:
-                st.write(f"- `{ex['expense_date']}` | **Worker:** {ex['worker_name']}")
-        else:
-            st.info("No expenses recorded yet.")
-    except:
-        st.info("Could not load expenses.")
+    exps = requests.get(f"{BACKEND_URL}/expenses").json()
+    if exps:
+        for ex in exps:
+            st.write(f"- `{ex['expense_date']}` | **Worker:** {ex['worker_name']}")
+    else:
+        st.info("No expenses recorded yet.")
+except:
+    st.info("Could not load expenses.")
 
     if st.session_state.role == "Admin":
         with st.sidebar.expander("🛠️ Manage Workers"):
