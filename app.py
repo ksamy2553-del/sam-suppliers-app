@@ -45,7 +45,7 @@ if not st.session_state.logged_in:
             else:
                 st.warning("Please fill in both fields.")
     
-    st.info("💡 Default Admin Account: Phone: `0700000000` | Password: `admin123`")
+   # st.info("💡 Default Admin Account: Phone: `0700000000` | Password: `admin123`")
     st.stop()  # Stops execution until logged in
 
 # --- LOGGED-IN SIDEBAR & APP NAVIGATION ---
