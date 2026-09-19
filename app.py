@@ -448,24 +448,24 @@ with tabs[5]:
                 st.warning("Please fill in all expense details correctly.")
                 
     st.markdown("### Expense History")
-    try:
+try:
         exps = requests.get(f"{BACKEND_URL}/expenses").json()
         if exps:
             for ex in exps:
-                st.write(f"- `{ex['expense_date']}` | **Worker:** {ex['worker_name']} | **Reason:** {ex['reason']} | **Amount:** UGX {ex['amount']:,.0f}")
+                st.write(f"- `{ex['expense_date']}` | **Worker:** {ex['worker_name']}")
         else:
             st.info("No expenses recorded yet.")
     except:
-        except:
         st.info("Could not load expenses.")
-        if st.session_state.role == "Admin":
-            with st.sidebar.expander("🛠️ Manage Workers"):
-                st.subheader("Registered Workers")
-        try:
-            res = requests.get(f"{BACKEND_URL}/workers")
-            if res.status_code == 200:
-                for w in res.json():
-                    st.write(f"**{w['worker_name']}** (`{w['phone']}`)")
+
+    if st.session_state.role == "Admin":
+        with st.sidebar.expander("🛠️ Manage Workers"):
+            st.subheader("Registered Workers")
+            try:
+                res = requests.get(f"{BACKEND_URL}/workers")
+                if res.status_code == 200:
+                    for w in res.json():
+                        st.write(f"**{w['worker_name']}** (`{w['phone']}`)")
                     reason_w = st.text_input("Reason for deletion", key=f"reason_w_{w['phone']}")
                     if st.button("Delete Worker", key=f"del_w_{w['phone']}"):
                         if not reason_w:
