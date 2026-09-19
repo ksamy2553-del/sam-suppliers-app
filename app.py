@@ -431,22 +431,46 @@ with tabs[3]:
         custs = requests.get(f"{BACKEND_URL}/customers").json()
         for c in custs:
             st.write(f"- **{c['name']}** | Phone: {c.get('phone', 'N/A')} | Address: {c.get('address', 'Walk-in')} | Total Credit Owed: **UGX {c.get('total_credit_owed', 0):,.0f}**")
+            
             if st.session_state.role == "Admin":
-                reason_cust = st.text_input("Reason for deletion", key=f"reason_cust_{c['id']}")
-                if st.button("Delete Customer", key=f"del_c_{c['id']}"):
-                    if not reason_cust:
-                        st.warning("Please provide a reason to delete this customer.")
-                    else:
-                        del_res = requests.delete(f"{BACKEND_URL}/customers/{c['id']}", params={"reason": reason_cust})
-                        if del_res.status_code == 200:
-                            st.success("Customer deleted.")
-                            st.rerun()
-                        else:
-                            st.error("Failed to delete customer.")
-            st.divider()
-    except Exception:
-        st.info("No customers loaded.")
+                # Session state key unique to this customer's delete trigger
+                delete_state_key = f"show_delete_cust_{c['id']}"
+                
+                if delete_state_key not in st.session_state:
+                    st.session_state[delete_state_key] = False
 
+                # Step 1: Initial Delete button to reveal the reason box
+                if not st.session_state[delete_state_key]:
+                    if st.button("Delete Customer", key=f"init_del_c_{c['id']}"):
+                        st.session_state[delete_state_key] = True
+                        st.rerun()
+                
+                # Step 2: Once triggered, show the input box and final confirmation
+                else:
+                    reason_cust = st.text_input("Provide reason for deletion:", key=f"reason_cust_{c['id']}")
+                    
+                    col_confirm, col_cancel = st.columns(2)
+                    with col_confirm:
+                        if st.button("Confirm Deletion", key=f"confirm_del_c_{c['id']}"):
+                            if not reason_cust.strip():
+                                st.warning("Please provide a valid reason.")
+                            else:
+                                del_res = requests.delete(f"{BACKEND_URL}/customers/{c['id']}", params={"reason": reason_cust})
+                                if del_res.status_code == 200:
+                                    st.success("Customer deleted.")
+                                    st.session_state[delete_state_key] = False
+                                    st.rerun()
+                                else:
+                                    error_detail = del_res.json().get("detail", "Unknown error")
+                                    st.error(f"Failed: {error_detail}")
+                    with col_cancel:
+                        if st.button("Cancel", key=f"cancel_del_c_{c['id']}"):
+                            st.session_state[delete_state_key] = False
+                            st.rerun()
+                            
+            st.divider()
+    except Exception as e:
+        st.info(f"Could not load customers: {e}")
 # --- TAB 5: CREDIT MANAGEMENT ---
 with tabs[4]:
     st.subheader("Customer Credit Tracking & Clearing")
