@@ -2,7 +2,7 @@ from datetime import datetime
 import requests
 import streamlit as st
 
-BACKEND_URL = "https://sam-suppliers-backend-3.onrender.com"
+BACKEND_URL = "https://sam-suppliers-backend-2.onrender.com"
 
 st.set_page_config(page_title="SAM SUPPLIERS POS", layout="wide")
 
